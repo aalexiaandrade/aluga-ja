@@ -1,42 +1,27 @@
-import React, { useState } from 'react';
-import Login from './telas/Login';
-import Automoveis from './telas/Automoveis';
-
-export default function App() {
-  const [usuarioLogado, setUsuarioLogado] = useState(null);
-
-  // Se não estiver logado, obriga a exibir a tela de Login / Cadastro
-  if (!usuarioLogado) {
-    return <Login onLoginSuccess={(user) => setUsuarioLogado(user)} />;
-  }
-
-  return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <header style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        borderBottom: '3px solid #FF6600', 
-        paddingBottom: '10px',
-        marginBottom: '20px'
-      }}>
-        <h1 style={{ color: '#FF6600', margin: 0 }}>Aluga Já</h1>
-        <div>
-          <span style={{ marginRight: '15px' }}>
-            Olá, <strong>{usuarioLogado.nome || usuarioLogado.username}</strong>!
-          </span>
-          <button 
-            onClick={() => setUsuarioLogado(null)} 
-            style={{ padding: '6px 12px', background: '#dc3545', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            Sair
-          </button>
-        </div>
-      </header>
-
-      <main>
-        <Automoveis />
-      </main>
-    </div>
-  );
+import { Routes,Route,Navigate } from 'react-router-dom'
+import { AuthProvider,useAuth } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
+import Layout from './components/Layout'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
+import NewOrder from './pages/NewOrder'
+import OrderDetails from './pages/OrderDetails'
+import Profile from './pages/Profile'
+import Clients from './pages/Clients'
+function PrivateApp(){
+ const {user}=useAuth()
+ return <Routes>
+  <Route path="/login" element={user?<Navigate to="/" replace/>:<Login/>}/>
+  <Route path="/cadastro" element={user?<Navigate to="/" replace/>:<Register/>}/>
+  <Route element={<ProtectedRoute><Layout/></ProtectedRoute>}>
+   <Route path="/" element={<Dashboard/>}/>
+   <Route path="/pedido/:id" element={<OrderDetails/>}/>
+   <Route path="/novo-pedido" element={<ProtectedRoute role="CLIENTE"><NewOrder/></ProtectedRoute>}/>
+   <Route path="/perfil" element={<ProtectedRoute role="CLIENTE"><Profile/></ProtectedRoute>}/>
+   <Route path="/clientes" element={<ProtectedRoute role="AGENTE"><Clients/></ProtectedRoute>}/>
+  </Route>
+  <Route path="*" element={<Navigate to={user?'/':'/login'} replace/>}/>
+ </Routes>
 }
+export default function App(){return <AuthProvider><PrivateApp/></AuthProvider>}

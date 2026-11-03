@@ -1,98 +1,93 @@
-💻 Aluga Já
-Sistema desenvolvido como parte da disciplina de Desenvolvimento e Integração de Aplicações Web, da PUC Minas.
+# Sistema de Aluguel de Carros
 
+Projeto acadêmico do Laboratório 02 – DIAW (PUC Minas).
 
-🚀 Link do Sistema:
-https://portfolio-alexia-lovat.vercel.app/
+## Stack
+- Java 25, Spring Boot 4.0.x, Maven
+- React + Vite
+- Supabase PostgreSQL
+- Spring Security + JWT
 
-🎯 Objetivo
-O objetivo deste projeto é desenvolver um portfólio pessoal responsivo, acessível e interativo, utilizando tecnologias modernas de desenvolvimento web.
+## Estrutura
+- `backend/`: API REST em arquitetura MVC (controller, service, repository, model, dto, security).
+- `frontend/`: aplicação React.
+- `database/schema.sql`: estrutura inicial do banco.
+- `docs/`: diagramas UML em Mermaid.
 
-A interface simula um desktop, permitindo navegar pelas informações por meio de janelas que representam diferentes aplicações, como apresentação pessoal, experiências profissionais, projetos e contato.
+## 1. Configurar o Supabase
+1. Crie um projeto no Supabase.
+2. Abra **SQL Editor** e execute `database/schema.sql`.
+3. Em **Project Settings > Database**, copie a connection string PostgreSQL.
+4. Preencha `backend/src/main/resources/application.properties` ou configure as variáveis de ambiente abaixo.
 
-✨ Funcionalidades
-Interface inspirada em um desktop: navegação por aplicações e janelas interativas.
-Sobre mim: apresentação pessoal, formação acadêmica, habilidades e interesses profissionais.
-Experiências profissionais: histórico de atuação e atividades desenvolvidas.
-Projetos: apresentação de projetos acadêmicos e pessoais, com descrições, tecnologias utilizadas e links para os repositórios.
-Contato: informações de contato e acesso às redes profissionais.
-Tema claro e escuro: possibilidade de alternar a aparência da interface.
-Internacionalização: alternância entre português e inglês.
-Barra de tarefas: acesso às aplicações e exibição de informações como data, horário e previsão do tempo.
-Área de documentos: organização de documentos pessoais e profissionais por categorias.
-Responsividade: adaptação da interface para diferentes tamanhos de tela, incluindo dispositivos móveis.
-🛠️ Tecnologias utilizadas
-Tecnologia	Finalidade
-React	Construção da interface por componentes reutilizáveis.
-JavaScript	Implementação das funcionalidades e interações.
-Vite	Configuração do ambiente de desenvolvimento e geração da versão de produção.
-Tailwind CSS	Estilização e construção do layout responsivo.
-Lucide React	Utilização de ícones na interface.
-EmailJS	Integração do formulário de contato com serviço de envio de e-mails, quando configurado.
-Open-Meteo	API utilizada para obter informações meteorológicas.
-HTML5 e CSS3	Estrutura e estilização da aplicação web.
-✨ Protótipos
-tela inicial sobre mim projetos experiencias documentos contato celular
+Variáveis:
+```env
+DB_URL=jdbc:postgresql://db.SEUPROJETO.supabase.co:5432/postgres?sslmode=require
+DB_USERNAME=postgres
+DB_PASSWORD=SUA_SENHA
+JWT_SECRET=uma-chave-secreta-com-pelo-menos-32-caracteres
+```
 
-Organização das principais pastas
-src/apps/: aplicações abertas pelas janelas do desktop.
-src/components/desktop/: componentes da área de trabalho e da barra de tarefas.
-src/components/ui/: componentes auxiliares da interface.
-src/components/windows/: gerenciamento, exibição e comportamento das janelas.
-src/data/: dados utilizados para preencher as aplicações, como projetos, experiências e documentos.
-src/assets/: imagens e outros recursos importados diretamente pelo código.
-public/: arquivos estáticos disponibilizados diretamente pela aplicação, incluindo wallpapers e documentos.
-src/App.jsx: componente principal da aplicação.
-src/main.jsx: ponto de entrada do React.
-src/index.css: estilos globais e configurações de estilo do projeto.
-package.json: dependências, metadados e scripts do projeto.
-vite.config.js: configuração do Vite.
-⚙️ Requisitos
-Antes de executar o projeto, é necessário ter instalado:
+> O backend usa conexão direta PostgreSQL. Não é necessário habilitar autenticação do Supabase: o login da aplicação é próprio e as senhas são armazenadas com BCrypt.
 
-Node.js — versão compatível com o Vite utilizado.
-npm, instalado junto com o Node.js.
-Git, caso queira clonar o repositório.
-🚀 Instalação e execução
-1. Clone o repositório
-git clone https://github.com/aalexiaandrade/Portfolio-Alexia.git
-2. Entre na pasta do frontend
-cd Portfolio-Alexia/src/frontend
-3. Instale as dependências
+## 2. Executar o backend
+Requisitos: JDK 25 e Maven 3.9+.
+
+```bash
+cd backend
+mvn spring-boot:run
+```
+API: `http://localhost:8080/api`
+
+## 3. Executar o frontend
+Requisitos: Node.js 20+.
+
+```bash
+cd frontend
 npm install
-4. Execute o ambiente de desenvolvimento
 npm run dev
-Após executar o comando, o Vite exibirá no terminal o endereço local para acessar a aplicação pelo navegador, normalmente http://localhost:5173.
+```
+Aplicação: `http://localhost:5173`
 
-5. Gere a versão de produção
-Para gerar os arquivos otimizados para publicação:
+## 4. Primeiro acesso
+Cadastre um usuário pela tela inicial. Para criar um agente, use o endpoint de cadastro com `tipo: "AGENTE"` ou altere o tipo diretamente no banco. Em uma entrega real, a criação de agentes deve ser restrita a um administrador.
 
-npm run build
-Para testar localmente a versão de produção:
+Exemplo de cadastro:
+```json
+{
+  "nome": "Maria Silva",
+  "email": "maria@email.com",
+  "senha": "123456",
+  "tipo": "CLIENTE",
+  "cpf": "12345678900",
+  "rg": "MG123456",
+  "endereco": "Rua A, 100",
+  "profissao": "Analista"
+}
+```
 
-npm run preview
-📱 Responsividade
-A interface foi planejada para se adaptar a diferentes resoluções, considerando tanto a experiência em computadores quanto em dispositivos móveis.
+## 5. Principais endpoints
+| Método | Endpoint | Acesso | Descrição |
+|---|---|---|---|
+| POST | `/api/auth/register` | Público | Cadastro de cliente ou agente |
+| POST | `/api/auth/login` | Público | Login e emissão de JWT |
+| GET/PUT | `/api/clientes/me` | CLIENTE | Consultar/alterar perfil |
+| GET | `/api/clientes` | AGENTE | Listar clientes |
+| POST | `/api/pedidos` | CLIENTE | Criar pedido |
+| GET | `/api/pedidos/meus` | CLIENTE | Listar pedidos do cliente |
+| GET | `/api/pedidos` | AGENTE | Listar pedidos para análise |
+| GET | `/api/pedidos/{id}` | Autenticado | Detalhar pedido |
+| PUT | `/api/pedidos/{id}` | CLIENTE | Alterar pedido em análise |
+| PATCH | `/api/pedidos/{id}/cancelar` | CLIENTE | Cancelar pedido |
+| PATCH | `/api/pedidos/{id}/avaliar` | AGENTE | Aprovar/reprovar pedido |
 
-O projeto utiliza estilos responsivos e wallpapers específicos para os diferentes formatos de tela.
-
-🔌 APIs e integrações
-Open-Meteo
-A API Open-Meteo é utilizada para consultar informações meteorológicas e exibir dados de temperatura e condições do tempo na barra de tarefas.
-
-Documentação: https://open-meteo.com/
-
-EmailJS
-O EmailJS pode ser utilizado para integrar o formulário de contato a um serviço de envio de e-mails, sem a necessidade de desenvolver um backend próprio exclusivamente para essa funcionalidade.
-
-Documentação: https://www.emailjs.com/docs/
-
-Caso sejam utilizadas credenciais do EmailJS, elas devem ser configuradas conforme a documentação do serviço. Não publique chaves privadas ou segredos no repositório.
-
-👩‍💻 Autora
-Aléxia Fernanda Alves de Andrade
-
-GitHub: https://github.com/aalexiaandrade
-LinkedIn: https://linkedin.com/in/aalexiaandrade
-E-mail: alexiaandrade2709@gmail.com
-Desenvolvido como projeto acadêmico da disciplina de Desenvolvimento e Integração de Aplicações Web — PUC Minas.
+## Regras implementadas
+- Login obrigatório para acessar funcionalidades privadas.
+- Clientes criam, consultam, alteram e cancelam seus próprios pedidos.
+- Agentes consultam e avaliam pedidos.
+- Pedido aprovado fica com status `APROVADO`; reprovado, `REPROVADO`.
+- Pedido só pode ser alterado/cancelado enquanto estiver `PENDENTE`.
+- Um cliente pode informar até três vínculos empregatícios/rendimentos.
+- O automóvel registra matrícula, ano, marca, modelo e placa.
+- O pedido pode informar banco agente e dados de crédito.
+- O proprietário do veículo pode ser CLIENTE, EMPRESA ou BANCO.
