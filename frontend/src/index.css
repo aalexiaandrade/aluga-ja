@@ -1,0 +1,36 @@
+:root {
+  --primary-orange: #FF6600;
+  --primary-orange-hover: #E05500;
+  --bg-white: #FFFFFF;
+  --bg-light-gray: #F4F4F9;
+  --text-dark: #333333;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-light-gray);
+  color: var(--text-dark);
+}
+
+.btn-primary {
+  background-color: var(--primary-orange);
+  color: var(--bg-white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-orange-hover);
+}
+
+.card {
+  background-color: var(--bg-white);
+  border-top: 4px solid var(--primary-orange);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
