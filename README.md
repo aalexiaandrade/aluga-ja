@@ -1,93 +1,184 @@
-# Sistema de Aluguel de Carros
+# AlugaJá – Sistema de Aluguel de Carros
 
-Projeto acadêmico do Laboratório 02 – DIAW (PUC Minas).
+Projeto acadêmico desenvolvido para o Laboratório 02 da disciplina **Desenvolvimento e Integração de Aplicações Web (DIAW)**, da PUC Minas.
 
-## Stack
-- Java 25, Spring Boot 4.0.x, Maven
-- React + Vite
-- Supabase PostgreSQL
-- Spring Security + JWT
+O **AlugaJá** é uma aplicação web para gerenciamento de aluguel de veículos, permitindo que usuários consultem veículos disponíveis, realizem cadastros e efetuem operações relacionadas à locação.
 
-## Estrutura
-- `backend/`: API REST em arquitetura MVC (controller, service, repository, model, dto, security).
-- `frontend/`: aplicação React.
-- `database/schema.sql`: estrutura inicial do banco.
-- `docs/`: diagramas UML em Mermaid.
+## Tecnologias utilizadas
 
-## 1. Configurar o Supabase
-1. Crie um projeto no Supabase.
-2. Abra **SQL Editor** e execute `database/schema.sql`.
-3. Em **Project Settings > Database**, copie a connection string PostgreSQL.
-4. Preencha `backend/src/main/resources/application.properties` ou configure as variáveis de ambiente abaixo.
+### Backend
+- Java 21
+- Spring Boot 4.0.0
+- Maven
+- Spring Security
+- JWT (JSON Web Token)
+- Spring Data JPA
+- Hibernate
 
-Variáveis:
-```env
-DB_URL=jdbc:postgresql://db.SEUPROJETO.supabase.co:5432/postgres?sslmode=require
-DB_USERNAME=postgres
-DB_PASSWORD=SUA_SENHA
-JWT_SECRET=uma-chave-secreta-com-pelo-menos-32-caracteres
+### Frontend
+- React
+- Vite
+- JavaScript
+- Axios
+- React Router DOM
+
+### Banco de dados
+- PostgreSQL
+- Supabase
+
+## Estrutura do projeto
+
+```text
+aluga-ja/
+├── backend/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/
+│   │   │   │   └── br/edu/pucminas/aluguel/
+│   │   │   │       ├── controller/
+│   │   │   │       ├── service/
+│   │   │   │       ├── repository/
+│   │   │   │       ├── model/
+│   │   │   │       └── security/
+│   │   │   └── resources/
+│   │   │       └── application.properties
+│   └── pom.xml
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js
+│
+└── README.md
 ```
 
-> O backend usa conexão direta PostgreSQL. Não é necessário habilitar autenticação do Supabase: o login da aplicação é próprio e as senhas são armazenadas com BCrypt.
+## 2. Executando o backend
 
-## 2. Executar o backend
-Requisitos: JDK 25 e Maven 3.9+.
+### Pré-requisitos
+- JDK 21
+- Maven 3.9 ou superior
+
+Acesse a pasta do backend:
+
+```bash
+cd backend
+```
+
+Execute a aplicação:
+
+```bash
+mvn clean spring-boot:run
+```
+
+Após a inicialização, a API estará disponível em:
+
+```text
+http://localhost:8080
+```
+
+A conexão com o banco de dados é estabelecida durante a inicialização da aplicação.
+
+## 3. Executando o frontend
+
+### Pré-requisitos
+- Node.js
+- npm
+
+Acesse a pasta do frontend:
+
+```bash
+cd frontend
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Inicie o servidor de desenvolvimento:
+
+```bash
+npm run dev
+```
+
+O Vite disponibilizará a aplicação em:
+
+```text
+http://localhost:5173
+```
+
+## 4. Autenticação
+
+O AlugaJá possui sistema próprio de autenticação, utilizando Spring Security e JWT.
+
+As rotas de autenticação são públicas para permitir o cadastro e o login dos usuários.
+
+### Principais operações de autenticação
+
+| Método | Endpoint | Descrição |
+|---|---|---|
+| POST | `/api/auth/register` | Cadastro de usuário |
+| POST | `/api/auth/login` | Autenticação e emissão de token JWT |
+
+Após o login, o token JWT é utilizado para autenticar as requisições que exigem acesso protegido.
+
+As senhas são armazenadas utilizando o algoritmo BCrypt.
+
+## 5. Comunicação entre frontend e backend
+
+O frontend realiza requisições HTTP para a API utilizando Axios.
+
+O backend disponibiliza os serviços na porta 8080, enquanto o frontend é executado pelo Vite.
+
+A configuração de CORS permite a comunicação entre as duas aplicações durante o desenvolvimento local.
+
+Origem padrão autorizada:
+
+```text
+http://localhost:5173
+```
+
+## 6. Funcionalidades do sistema
+
+O AlugaJá foi desenvolvido com o objetivo de oferecer funcionalidades para gerenciamento de aluguel de veículos, incluindo:
+
+- Cadastro de usuários.
+- Login e autenticação.
+- Consulta de veículos.
+- Gerenciamento de veículos.
+- Integração com banco de dados PostgreSQL.
+- Proteção de rotas por autenticação.
+- Gerenciamento de informações relacionadas às locações.
+
+## 7. Execução completa do projeto
+
+Para executar o sistema localmente, é necessário manter dois terminais abertos.
+
+**Terminal 1 – Backend:**
 
 ```bash
 cd backend
 mvn spring-boot:run
 ```
-API: `http://localhost:8080/api`
 
-## 3. Executar o frontend
-Requisitos: Node.js 20+.
+**Terminal 2 – Frontend:**
 
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Aplicação: `http://localhost:5173`
 
-## 4. Primeiro acesso
-Cadastre um usuário pela tela inicial. Para criar um agente, use o endpoint de cadastro com `tipo: "AGENTE"` ou altere o tipo diretamente no banco. Em uma entrega real, a criação de agentes deve ser restrita a um administrador.
+Acesse a aplicação pelo navegador:
 
-Exemplo de cadastro:
-```json
-{
-  "nome": "Maria Silva",
-  "email": "maria@email.com",
-  "senha": "123456",
-  "tipo": "CLIENTE",
-  "cpf": "12345678900",
-  "rg": "MG123456",
-  "endereco": "Rua A, 100",
-  "profissao": "Analista"
-}
+```text
+http://localhost:5173
 ```
 
-## 5. Principais endpoints
-| Método | Endpoint | Acesso | Descrição |
-|---|---|---|---|
-| POST | `/api/auth/register` | Público | Cadastro de cliente ou agente |
-| POST | `/api/auth/login` | Público | Login e emissão de JWT |
-| GET/PUT | `/api/clientes/me` | CLIENTE | Consultar/alterar perfil |
-| GET | `/api/clientes` | AGENTE | Listar clientes |
-| POST | `/api/pedidos` | CLIENTE | Criar pedido |
-| GET | `/api/pedidos/meus` | CLIENTE | Listar pedidos do cliente |
-| GET | `/api/pedidos` | AGENTE | Listar pedidos para análise |
-| GET | `/api/pedidos/{id}` | Autenticado | Detalhar pedido |
-| PUT | `/api/pedidos/{id}` | CLIENTE | Alterar pedido em análise |
-| PATCH | `/api/pedidos/{id}/cancelar` | CLIENTE | Cancelar pedido |
-| PATCH | `/api/pedidos/{id}/avaliar` | AGENTE | Aprovar/reprovar pedido |
+---
 
-## Regras implementadas
-- Login obrigatório para acessar funcionalidades privadas.
-- Clientes criam, consultam, alteram e cancelam seus próprios pedidos.
-- Agentes consultam e avaliam pedidos.
-- Pedido aprovado fica com status `APROVADO`; reprovado, `REPROVADO`.
-- Pedido só pode ser alterado/cancelado enquanto estiver `PENDENTE`.
-- Um cliente pode informar até três vínculos empregatícios/rendimentos.
-- O automóvel registra matrícula, ano, marca, modelo e placa.
-- O pedido pode informar banco agente e dados de crédito.
-- O proprietário do veículo pode ser CLIENTE, EMPRESA ou BANCO.
+**Desenvolvimento acadêmico – PUC Minas**
+
+Projeto desenvolvido para a disciplina de Desenvolvimento e Integração de Aplicações Web (DIAW).
