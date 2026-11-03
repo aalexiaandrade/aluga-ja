@@ -1,4 +1,4 @@
-package br.pucminas.alugaja.model;
+package main.java.com.example.alugaja.model;
 
 import jakarta.persistence.*;
 import java.util.List;
